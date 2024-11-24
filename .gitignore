@@ -1,0 +1,2 @@
+# ignore as we want to generate after running init.sh
+initdb.sql

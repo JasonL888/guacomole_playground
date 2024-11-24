@@ -1,0 +1,45 @@
+services:
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
+    ports:
+      - "4822:4822"
+    networks:
+      - guac-network
+
+  guacamole:
+    image: guacamole/guacamole
+    container_name: guacamole
+    depends_on:
+      - guacd
+      - db
+    environment:
+      GUACD_HOSTNAME: guacd
+      MYSQL_HOSTNAME: db
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_user
+      MYSQL_PASSWORD: guacamole_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "8080:8080"
+    networks:
+      - guac-network
+
+  db:
+    image: mariadb
+    container_name: guac-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_user
+      MYSQL_PASSWORD: guacamole_password
+    networks:
+      - guac-network
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
+
+networks:
+  guac-network:
